@@ -6,7 +6,9 @@ const { mongoose } = require('./db/mongoose');
 const { Todo } = require('./models/todo');
 const { User } = require('./models/user');
 
-var app = express();
+let app = express();
+
+const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
@@ -55,30 +57,10 @@ app.get('/todos/:id', (req, res) => {
     )
 })
 
-app.listen(3000, () => {
-    console.log('Started on port 3000');
+app.listen(port, () => {
+    console.log(`Started on port ${port}`);
 })
 
 module.exports = {
     app
 }
-
-// let user = new User({
-//     email: 'emp1@gdev.com'
-// })
-
-// user.save().then((doc) => {
-//     console.log('Saved user', doc)
-// }, (e) => {
-//     console.log('Couldn\'t save user');
-// })
-
-// let newTodo = new Todo({
-//     text: 'Go shopping'
-// })
-
-// newTodo.save().then((doc) => {
-//     console.log('Saved todo', doc)
-// }, (e) => {
-//     console.log('Unable to save Todo')
-// });

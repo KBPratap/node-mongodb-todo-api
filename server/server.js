@@ -8,6 +8,7 @@ const _ = require('lodash');
 const { mongoose } = require('./db/mongoose');
 const { Todo } = require('./models/todo');
 const { User } = require('./models/user');
+const { authenticate } = require('./middleware/authenticate');
 
 let app = express();
 
@@ -121,7 +122,9 @@ app.post('/users', (req, res) => {
         })
 });
 
-
+app.get('/users/me', authenticate , (req, res) => {
+    res.send(req.user);    
+});
 
 app.listen(port, () => {
     console.log(`Started on port ${port}`);

@@ -273,7 +273,7 @@ describe('POST /users/login', () => {
                 }
                 User.findById(users[0]._id).then((user) => {
                     let token = user.tokens[0]
-                    console.log(token.token)
+                    // console.log(token.token)
                     expect(token).toHaveProperty('access', 'auth');
                     // expect(token).toHaveProperty('token', res.headers['x-auth']);
                     expect(token).toHaveProperty('token');
@@ -292,4 +292,30 @@ describe('POST /users/login', () => {
             .expect(400)
             .end(done)
     });
+})
+
+describe('DELETE /users/me/token', () => {
+    it('should delete auth token on logout', (done) => {
+        request(app)
+            .delete('/users/me/token')
+            .set('x-auth', users[0].tokens[0].token)
+            .expect(200)
+            .end((err, res) => {
+                if(err) {
+                    return done(err);
+                }
+                User.findById(users[0]._id).then((user) => {
+                    expect(user.tokens).toHaveLength(0);
+                    done();
+                })
+            })
+    })
+
+    it('should throw 401 with invalid token', (done) => {
+        request(app)
+            .delete('/users/me/token')
+            .set('x-auth', '')
+            .expect(401)
+            .end(done)
+    })
 })

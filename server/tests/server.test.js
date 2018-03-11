@@ -254,3 +254,42 @@ describe('POST /users', () => {
             .end(done)
     })
 })
+
+describe('POST /users/login', () => {
+    it('should login user and return auth-token', (done) => {
+        request(app)
+            .post('/users/login')
+            .send({
+                email: users[0].email, //'kbpratap@gmail.com',
+                password: users[0].password //'user1Pass',
+            })
+            .expect(200)
+            .expect((res) => {
+                expect(res.headers['x-auth']).toBeDefined();
+            })
+            .end((err, res) => {
+                if(err) {
+                    return done(err);
+                }
+                User.findById(users[0]._id).then((user) => {
+                    let token = user.tokens[0]
+                    console.log(token.token)
+                    expect(token).toHaveProperty('access', 'auth');
+                    // expect(token).toHaveProperty('token', res.headers['x-auth']);
+                    expect(token).toHaveProperty('token');
+                    done();
+                }).catch((e) => done(e));
+            })
+    });
+
+    it('should reject invalid login', (done) => {
+        request(app)
+            .post('/users/login')
+            .send({
+                email: users[0].email, 
+                password: users[0].password + 1
+            })
+            .expect(400)
+            .end(done)
+    });
+})
